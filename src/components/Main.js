@@ -5,128 +5,95 @@ function Main() {
     const [intensity, setIntensity] = useState('Mild');
     const [roast, setRoast] = useState('');
     const [tips, setTips] = useState([]);
-  
+ 
     const handleGenerateRoast = async () => {
-      const mockRoasts = {
-        Mild: [
-          "You seem nice, but your job title sounds like it came from a cereal box.",
-          "Your bio is so generic, it could double as a fortune cookie message.",
-          "It's great that you're 'dedicated and hardworking,' just like everyone else on LinkedIn.",
-          "Your bio is like a blank canvas—waiting for some actual personality to show up."
-        ],
-        Savage: [
-          "Oh, you're 'passionate about blockchain'? Can't wait for your TED Talk on solving world hunger with NFTs.",
-          "Your LinkedIn headline reads like a Mad Libs for tech buzzwords.",
-          "'Innovative thinker'—translation: you once had an idea in the shower.",
-          "Your bio says 'team player,' but we all know you muted the Zoom chat."
-        ],
-        Soulcrushing: [
-          "Your bio screams 'LinkedIn influencer,' but we all know you're just here for the free coffee.",
-          "'Visionary leader'? Wow, tell us more about that one group project you dominated in high school.",
-          "Your profile picture says 'professional,' but your bio says 'work in progress.'",
-          "You have the charisma of a PowerPoint presentation in Comic Sans."
-        ]
-      };
+      const randomImg = images[Math.floor(Math.random() * images.length)];
+      showFlyingImage(randomImg);
+      try {
+        const response = await fetch('https://careercrispapi.zachl.tech/roast', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bio: userData,
+            roastIntensity: intensity.toLowerCase(), // Convert to lowercase for API compatibility
+          }),
+        });
     
-      // Randomly pick one roast for the selected intensity
-      if(userData){
-        const selectedRoast = mockRoasts[intensity][Math.floor(Math.random() * mockRoasts[intensity].length)];
-      setRoast(selectedRoast);
-      }else{
-        alert("invalid input")
+        console.log('Response Status:', response.status);
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error Response:', errorText);
+          throw new Error(`Failed to fetch the roast: ${errorText}`);
+        }
+    
+        const data = await response.json();
+        console.log('Response Data:', data);
+    
+        setRoast(data.roast);
+        setTips(data.tips || []);
+      } catch (error) {
+        console.error('Error fetching roast:', error.message);
+        setRoast('Something went wrong. Please check your input and try again.');
+        setTips([]);
       }
-      
     };
-    
-    // const handleGenerateRoast = async () => {
-    //   try {
-    //     const response = await fetch('https://careercrispapi.zachl.tech/roast', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         bio: userData,
-    //         roastIntensity: intensity,
-    //       }),
-    //     });
-    
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch the roast. Please try again later.');
-    //     }
-    
-    //     const data = await response.json();
-    //     setRoast(data.roast); // Assuming the API returns a JSON object with a `roast` key
-    //   } catch (error) {
-    //     console.error('Error fetching roast:', error);
-    //     setRoast('Something went wrong. Please check your input and try again.');
-    //   }
-    // };
-
-    // const handleGenerateRoast = async () => {
-    //   try {
-    //     const response = await fetch('https://careercrispapi.zachl.tech/roast', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         bio: userData,
-    //         roastIntensity: intensity,
-    //       }),
-    //     });
-    
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch the roast. Please try again later.');
-    //     }
-    
-    //     const data = await response.json();
-    //     setRoast(data.roast);
-    //     setTips(data.tips || []); // Handle tips if present, default to an empty array
-    //   } catch (error) {
-    //     console.error('Error fetching roast:', error);
-    //     setRoast('Something went wrong. Please check your input and try again.');
-    //     setTips([]);
-    //   }
-    // };
-    
-    // const handleGenerateRoast = async () => {
-    //   try {
-    //     const response = await fetch('https://careercrispapi.zachl.tech/roast', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         bio: userData,
-    //         roastIntensity: intensity,
-    //       }),
-    //     });
-    
-    //     console.log('Response Status:', response.status);
-    
-    //     if (!response.ok) {
-    //       const errorText = await response.text();
-    //       console.error('Error Response:', errorText);
-    //       throw new Error(`Failed to fetch the roast: ${errorText}`);
-    //     }
-    
-    //     const data = await response.json();
-    //     console.log('Response Data:', data);
-    
-    //     setRoast(data.roast);
-    //     setTips(data.tips || []);
-    //   } catch (error) {
-    //     console.error('Error fetching roast:', error.message);
-    //     setRoast('Something went wrong. Please check your input and try again.');
-    //     setTips([]);
-    //   }
-    // };
+    const images = [
+      "../image/don-arrow.jpg",
+      "../image/don-asi-no.jpg",
+      "../image/don-call.jpg",
+      "../image/don-calll.jpg",
+      "../image/don-crown.jpg",
+      "../image/don-eyes.jpg",
+      "../image/don-stretch.webp",
+      "../image/kai-tweak.jpg",
+      "../image/speed-huh.jpg",
+  
+    ]
+    function showFlyingImage(imageUrl) {
+      const container = document.getElementById('flying-text-container'); 
+      const flyingImage = document.createElement('img');
+  
+      // Set image source and styles
+      flyingImage.src = imageUrl;
+      flyingImage.style.position = 'absolute';
+      flyingImage.style.width = `${Math.random() * 100 + 100}px`; // Random width between 50px and 150px
+      flyingImage.style.zIndex = '1000';
+  
+      // Random start position
+      const startX = Math.random() * window.innerWidth;
+      const startY = Math.random() * window.innerHeight;
+      flyingImage.style.left = `${startX}px`;
+      flyingImage.style.top = `${startY}px`;
+  
+      // Append to container
+      container.appendChild(flyingImage);
+  
+      // Animate the image
+      const animationDuration = 1500; // 1.5 seconds
+      flyingImage.animate(
+          [
+              { transform: 'translateY(0)', opacity: 1 },
+              { transform: 'translateY(-100px)', opacity: 0 },
+          ],
+          {
+              duration: animationDuration,
+              easing: 'ease-out',
+          }
+      );
+  
+      // Remove image after animation
+      setTimeout(() => {
+          container.removeChild(flyingImage);
+      }, animationDuration);
+  }
     
   
     return (
       <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-        <div className='grid grid-flow-col'>
+        <div  id='flying-text-container' className='grid grid-flow-col'>
         <img src='/granola bar.jpg' width={100}></img>
         <img src='/granola bar.jpg' width={100}></img>
         <img src='/granola bar.jpg' width={100}></img>
@@ -172,7 +139,7 @@ function Main() {
           >
             <option value="Mild">Mild</option>
             <option value="Savage">Savage</option>
-            <option value="Soulcrushing">Soul-crushing</option>
+            <option value="Soul-crushing">Soul-crushing</option>
           </select>
         </div>
   
