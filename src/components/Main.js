@@ -20,7 +20,7 @@ function Main() {
           "'Innovative thinker'—translation: you once had an idea in the shower.",
           "Your bio says 'team player,' but we all know you muted the Zoom chat."
         ],
-        "Soul-crushing": [
+        Soulcrushing: [
           "Your bio screams 'LinkedIn influencer,' but we all know you're just here for the free coffee.",
           "'Visionary leader'? Wow, tell us more about that one group project you dominated in high school.",
           "Your profile picture says 'professional,' but your bio says 'work in progress.'",
@@ -29,8 +29,13 @@ function Main() {
       };
     
       // Randomly pick one roast for the selected intensity
-      const selectedRoast = mockRoasts[intensity][Math.floor(Math.random() * mockRoasts[intensity].length)];
+      if(userData){
+        const selectedRoast = mockRoasts[intensity][Math.floor(Math.random() * mockRoasts[intensity].length)];
       setRoast(selectedRoast);
+      }else{
+        alert("invalid input")
+      }
+      
     };
     
     // const handleGenerateRoast = async () => {
@@ -167,7 +172,7 @@ function Main() {
           >
             <option value="Mild">Mild</option>
             <option value="Savage">Savage</option>
-            <option value="Soul-crushing">Soul-crushing</option>
+            <option value="Soulcrushing">Soul-crushing</option>
           </select>
         </div>
   
